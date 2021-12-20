@@ -59,12 +59,20 @@ class AuthController extends Controller
         );   
     }
 
-    public function userProfile() {        
-        return response()->json([
-            "status" => 1,
-            "message" => "Acerca del perfil de usuario",
-            "data" => auth()->user()
-        ]);
+    public function userProfile($id) {
+        
+        if( User::where('id', $id)->exists() ){            
+            $info = User::where('id', $id)->get();
+            return response()->json([
+                "status" => 1,
+                "msg" => $info,
+            ], 200);
+        }else{            
+            return response()->json([
+                "status" => 0,
+                "msg" => "No de encontró el Empresa"
+            ], 404);
+        }
     }
     public function listaUsuarios() {        
         $users = User::all();

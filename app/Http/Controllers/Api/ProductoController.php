@@ -38,7 +38,7 @@ class ProductoController extends Controller
     }
 
     // Muestra TODOS los blogs de UN USUARIO en particular
-    public function listaProdctos(Request $request) {
+    public function listaProdctos() {
         $Productos = Producto::all();
         return response()->json($Productos);
     }

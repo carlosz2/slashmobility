@@ -19,18 +19,23 @@ use App\Http\Controllers\Api\NewPasswordController;
 
 Route::middleware('auth:sanctum','verify')->get('/user', function (Request $request) {
     return $request->user();  
-    Route::post('logout', 'App\Http\Controllers\UserController@logout');
-    Route::get("user-profile", [UserController::class, "userProfile"]);
-    Route::get("listaUsuarios", [UserController::class, "listaUsuarios"]);
-
-    //rutas para Blog    
-    Route::post("create-productos", [BlogController::class, "createProductos"]); 
-    Route::get("list-Productos", [BlogController::class, "listProductos"]); 
-    Route::get("show-Producto/{id}", [BlogController::class, "showProducto"]); 
-
-    Route::delete("delete-Producto/{id}", [BlogController::class, "deleteProducto"]);
-    Route::put("update-Producto/{id}", [BlogController::class, "updateProducto"]); 
+    Route::post('logout', [AuthController::class, "logout"]);
+    Route::get("user-profile/{id}", [AuthController::class, "userProfile"]);
+    Route::get("listaUsuarios", [AuthController::class, "listaUsuarios"]);
     Route::post('reset-password', [NewPasswordController::class, 'reset']);
+    //rutas para Productos    
+    Route::post("create-producto", [BlogController::class, "createProducto"]); 
+    Route::get("list-Productos", [BlogController::class, "listaProductos"]); 
+    Route::get("show-Producto/{id}", [BlogController::class, "showProducto"]); 
+    Route::get("TipoProducto/{tipo}", [BlogController::class, "TipoProducto"]); 
+    Route::get("ListaProductoEnviados/{ciudad}", [BlogController::class, "ListaProductoEnviados"]); 
+    Route::put("update-Producto/{id}", [BlogController::class, "updateProducto"]); 
+     //rutas para Empresas    
+     Route::post("create-empresa", [BlogController::class, "createEmpresa"]); 
+     Route::get("list-empresa", [BlogController::class, "listaEmpresas"]); 
+     Route::get("show-empresa/{id}", [BlogController::class, "showEmpresa"]); 
+     Route::put("update-empresa/{id}", [BlogController::class, "updateEmpresa"]);
+   
 });
 
 Route::post('email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
@@ -38,6 +43,5 @@ Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'ver
 
 Route::post('register', 'App\Http\Controllers\UserController@register');
 Route::post('login', 'App\Http\Controllers\UserController@login');
-
 
 Route::post('forgot-password', [NewPasswordController::class, 'forgotPassword']);
