@@ -11,7 +11,7 @@ use App\Models\Empresa;
 class EmpresaController extends Controller
 {    
     // Crear un Empresa
-    public function createBlog(Request $request) {
+    public function createEmpresa(Request $request) {
         //validacion
         $request->validate([
             "nombre" => "required",
@@ -56,7 +56,7 @@ class EmpresaController extends Controller
         }
     }
 
-    public function updateProductos(Request $request){
+    public function updateEmpresa(Request $request){
         if ( Empresa::where( "id", $request->id )->exists() ) {                        
             $Empresa = Empresa::find($request->id);
             
