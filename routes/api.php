@@ -20,16 +20,16 @@ use \Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 |
 */
 
-
-
-Route::get('/user', function () {
+Route::group( ['middleware'=> ["auth:sanctum"] ], function() {
 
     //rutas para Usuarios
     
-    Route::post('logout', [AuthController::class, "logout"]);
+    Route::get('logout', [AuthController::class, "logout"]);
     Route::get("user-profile/{id}", [AuthController::class, "userProfile"]);
     Route::get("listaUsuarios", [AuthController::class, "listaUsuarios"]);
-    Route::post('reset-password', [NewPasswordController::class, 'reset']);
+    Route::post('forgot-password', [NewPasswordController::class, 'forgotPassword']);
+    Route::post('reset.password', [NewPasswordController::class, 'reset']);
+    
     //rutas para Productos    
     Route::post("create-producto", [BlogController::class, "createProducto"]); 
     Route::get("list-Productos", [BlogController::class, "listaProductos"]); 
@@ -42,10 +42,11 @@ Route::get('/user', function () {
      Route::get("list-empresa", [BlogController::class, "listaEmpresas"]); 
      Route::get("show-empresa/{id}", [BlogController::class, "showEmpresa"]); 
      Route::put("update-empresa/{id}", [BlogController::class, "updateEmpresa"]);
-    })->middleware('verified');
+    });
  //rutas para Usuarios
  Route::post('login', [AuthController::class, "login"]);
- Route::post('reset-password', [NewPasswordController::class, 'reset']);
+ Route::post('register', [AuthController::class, 'register']);
+ //Route::post('reset-password', [NewPasswordController::class, 'reset']);
 Route::post('email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
 Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify')->middleware('auth:sanctum');
 
@@ -57,5 +58,3 @@ Route::get('/email/verify', function () {
 })->middleware('auth')->name('verification.notice');
 
 
-
-Route::post('forgot-password', [NewPasswordController::class, 'forgotPassword']);

@@ -75,8 +75,8 @@ class ProductoController extends Controller
     }
     public function ListaProductoEnviados($ciudad) {
         if( Empresa::where('ciudad', $ciudad)->exists() ){ 
-        $info = Producto::select('Productos.nombre', 'Productos.imagen','Empresas.ciudad')
-                ->join('Empresas', 'Productos.nombre_empresa', '=', 'Empresas.nombre_empresa')
+        $info = Producto::select('productos.nombre', 'productos.imagen','empresas.ciudad')
+                ->join('empresas', 'productos.empresa_id', '=', 'empresas.id')
                 ->get();
 
       

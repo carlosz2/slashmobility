@@ -13,9 +13,6 @@ use App\Http\Requests\Auth\LoginRequest;
 
 class AuthController extends Controller
 {
-  
-   
-
     public function register(Request $request) {        
         // Validaciones para registrar un usuario
         $request->validate([
@@ -78,8 +75,8 @@ class AuthController extends Controller
         $users = User::all();
         return response()->json($users);
     }
-    public function logout(Request $request) {        
-        $request->user()->tokens()->delete();
+    public function logout() {        
+        auth()->user()->tokens()->delete();
         return response()->json([
             "status" => 1,
             "message" => "Cierre de sesión OK"           

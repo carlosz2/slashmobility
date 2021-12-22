@@ -21,8 +21,8 @@ class CreateProductosTable extends Migration
             $table->string("descripcion");
             $table->string("imagen");
 
-            $table->string('nombre_empresa')->unsigned();
-            $table->foreign('nombre_empresa')->references('id')->on('empresas');
+            $table->unsignedInteger('empresa_id'); 
+            $table->foreign('empresa_id')->references('id')->on('empresas');
             $table->timestamps();
         });
     }
