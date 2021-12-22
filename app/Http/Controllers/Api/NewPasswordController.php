@@ -34,13 +34,14 @@ class NewPasswordController extends Controller
     }
 
     public function reset(Request $request)
-    {
+    {   
+        
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
             'password' => ['required', 'confirmed', RulesPassword::defaults()],
         ]);
-
+     
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
@@ -54,14 +55,15 @@ class NewPasswordController extends Controller
                 event(new PasswordReset($user));
             }
         );
+      
 
         if ($status == Password::PASSWORD_RESET) {
-            return response([
+            return response()->json([
                 'message'=> 'Password reset successfully'
             ]);
         }
 
-        return response([
+        return response()->json([
             'message'=> __($status)
         ], 500);
 
