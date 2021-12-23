@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use \App\Http\Middleware\Authenticate;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\EmpresaController;
+use App\Http\Controllers\Api\ProductoController;
 use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\NewPasswordController;
 use \Illuminate\Auth\Middleware\EnsureEmailIsVerified;
@@ -31,17 +33,17 @@ Route::group( ['middleware'=> ["auth:sanctum"] ], function() {
     Route::post('reset.password', [NewPasswordController::class, 'reset']);
     
     //rutas para Productos    
-    Route::post("create-producto", [BlogController::class, "createProducto"]); 
-    Route::get("list-Productos", [BlogController::class, "listaProductos"]); 
-    Route::get("show-Producto/{id}", [BlogController::class, "showProducto"]); 
-    Route::get("TipoProducto/{tipo}", [BlogController::class, "TipoProducto"]); 
-    Route::get("ListaProductoEnviados/{ciudad}", [BlogController::class, "ListaProductoEnviados"]); 
-    Route::put("update-Producto/{id}", [BlogController::class, "updateProducto"]); 
+    Route::post("create-producto", [ProductoController::class, "createProducto"]); 
+    Route::get("list-Productos", [ProductoController::class, "listaProductos"]); 
+    Route::get("show-Producto/{id}", [ProductoController::class, "showProducto"]); 
+    Route::get("TipoProducto/{tipo}", [ProductoController::class, "TipoProducto"]); 
+    Route::get("ListaProductoEnviados/{ciudad}", [ProductoController::class, "ListaProductoEnviados"]); 
+    Route::put("update-Producto/{id}", [ProductoController::class, "updateProducto"]); 
      //rutas para Empresas    
-     Route::post("create-empresa", [BlogController::class, "createEmpresa"]); 
-     Route::get("list-empresa", [BlogController::class, "listaEmpresas"]); 
-     Route::get("show-empresa/{id}", [BlogController::class, "showEmpresa"]); 
-     Route::put("update-empresa/{id}", [BlogController::class, "updateEmpresa"]);
+     Route::post("create-empresa", [EmpresaController::class, "createEmpresa"]); 
+     Route::get("list-empresa", [EmpresaController::class, "listaEmpresas"]); 
+     Route::get("show-empresa/{id}", [EmpresaController::class, "showEmpresa"]); 
+     Route::put("update-empresa/{id}", [EmpresaController::class, "updateEmpresa"]);
     });
  //rutas para Usuarios
  Route::post('login', [AuthController::class, "login"]);

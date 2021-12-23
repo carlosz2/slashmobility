@@ -28,7 +28,7 @@ class EmpresaController extends Controller
         $Empresa->ciudad = $request->ciudad;
         $Empresa->save();
         //response
-        return response([
+        return response()->json([
             "status" => 1,
             "msg" => "Empresa creado exitosamente!"
         ]);
