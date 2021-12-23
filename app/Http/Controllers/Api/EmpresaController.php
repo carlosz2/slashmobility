@@ -22,7 +22,7 @@ class EmpresaController extends Controller
         // Tenemos que traer el id del usuario logueado
        
         $Empresa = new Empresa();    
-        $Empresa->nombre = $request->nombre;
+        $Empresa->nombre_empresa = $request->nombre_empresa;
         $Empresa->direccion = $request->direccion;
         $Empresa->telefono = $request->telefono;
         $Empresa->ciudad = $request->ciudad;

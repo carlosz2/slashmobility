@@ -17,7 +17,7 @@ class Producto extends Model
         'tipo',
         'descripcion',   
         'imagen',
-        'nombre_empresa',          
+        'empresa_id',          
     ];
 
     public $timestamps = false;
