@@ -13,9 +13,9 @@ class EmailVerificationController extends Controller
     public function sendVerificationEmail(Request $request)
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return [
+            return response()->json([
                 'message' => 'Already Verified'
-            ];
+            ],200);
         }
 
         $request->user()->sendEmailVerificationNotification();
@@ -26,17 +26,17 @@ class EmailVerificationController extends Controller
     public function verify(EmailVerificationRequest $request)
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return [
+            return response()->json([
                 'message' => 'Email already verified'
-            ];
+            ],200);
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return [
+        return response()->json([
             'message'=>'Email has been verified'
-        ];
+        ],200);
     }
 }

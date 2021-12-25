@@ -22,15 +22,15 @@ use \Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 |
 */
 
-Route::group( ['middleware'=> ["auth:sanctum"] ], function() {
+Route::group( ['middleware'=> ['auth:sanctum'] ], function() {
 
     //rutas para Usuarios
     
-    Route::get('logout', [AuthController::class, "logout"]);
+    Route::post('logout', [AuthController::class, "logout"]);
     Route::get("user-profile/{id}", [AuthController::class, "userProfile"]);
     Route::get("listaUsuarios", [AuthController::class, "listaUsuarios"]);
     Route::post('forgot-password', [NewPasswordController::class, 'forgotPassword']);
-    Route::post('reset.password', [NewPasswordController::class, 'reset']);
+    Route::post('reset-password', [NewPasswordController::class, 'reset']);
     
     //rutas para Productos    
     Route::post("create-producto", [ProductoController::class, "createProducto"]); 
@@ -52,11 +52,5 @@ Route::group( ['middleware'=> ["auth:sanctum"] ], function() {
 Route::post('email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
 Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify')->middleware('auth:sanctum');
 
-
-
-Route::get('/email/verify', function () {
-
-    return view('welcome');
-})->middleware('auth')->name('verification.notice');
 
 

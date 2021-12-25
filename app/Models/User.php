@@ -45,5 +45,12 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function sendPasswordResetNotification($token)
+    {
+
+        $url = 'https://slashmobility/reset-password?token=' . $token;
+
+        $this->notify(new ResetPasswordNotification($url));
+    }
 
 }
