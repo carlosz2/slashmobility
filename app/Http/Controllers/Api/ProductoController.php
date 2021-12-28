@@ -5,9 +5,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Productos;
 use App\Models\Empresas;
+use App\Http\Resources\Producto as ProductoResource;
+use App\Http\Controllers\API\BaseController as BaseController;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
-class ProductoController extends Controller
+class ProductoController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -17,10 +20,8 @@ class ProductoController extends Controller
     public function index()
     {
         $Productos = Productos::all();
-        return response()->json($Productos);
+        return $this->sendResponse(ProductoResource::collection($Productos), 'Productos Encontrados.');
     }
-
-   
 
     /**
      * Store a newly created resource in storage.
@@ -30,38 +31,34 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $input = $request->all();
+        $validator = Validator::make($input, [
             "nombre" => "required",
             "tipo" => "required",
             "descripcion" => "required",
             "imagen" => "required",
             "nombre_empresa" => "required",
         ]);
-       
-        
-        $producto = new Productos();
+        if($validator->fails()){
+            return $this->sendError($validator->errors());       
+        }
+      
         if($request->hasFIle('imagen')){
+            $producto = new Productos();
             $nombreOriginal =$request->file('imagen')->getClientOriginalName();
             $nuevoNombre=Carbon::now()->timestamp."_".$nombreOriginal;
             $carpetaDestino='./upload/';
             $request->file('imagen')->move($carpetaDestino,$nuevoNombre);
             $producto->imagen = ltrim($carpetaDestino,'.').$nuevoNombre;
-           
-        $producto->nombre = $request->nombre;
-        $producto->tipo = $request->tipo;
-        $producto->descripcion = $request->descripcion;
-        
-        $producto->nombre_empresa =$request->nombre_empresa;;
-        
-        $producto->save();
+            $producto->nombre = $request->nombre;
+            $producto->tipo = $request->tipo;
+            $producto->descripcion = $request->descripcion;
+            $producto->nombre_empresa =$request->nombre_empresa;
+            $producto->save();
         }
            
-        
-        //response
-        return response([
-            "producto_creado" => $producto,
-            "msg" => "¡producto creado exitosamente!"
-        ],201);
+        return $this->sendResponse(new ProductoResource($producto), 'Producto creado.');
+       
     }
 
     /**
@@ -72,16 +69,11 @@ class ProductoController extends Controller
      */
     public function show($id)
     {
-        if( Productos::where('id', $id)->exists() ){            
-            $info = Productos::find($id)->get();
-            return response()->json([
-                "msg" => $info,
-            ], 200);
-        }else{            
-            return response()->json([
-                "msg" => "No de encontró el Productos"
-            ], 404);
+        $producto = Productos::find($id);
+        if (is_null($producto)) {
+            return $this->sendError('Producto no se encuentra registrado.');
         }
+        return $this->sendResponse(new ProductoResource($producto), 'Producto encontrado.');
     }
 
     /**
@@ -92,22 +84,23 @@ class ProductoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        if ( Productos::where( "id", $id)->exists() ) {                        
-            $producto = Productos::find($id);
-           
-            $producto->update($request->all());
-   
-            return response()->json([
-               "producto_atualizado"=>$producto,
-                "msg" => "Producto actualizado correctamente."
-            ],200);
-        }else{
-            //responde la API
-            return response()->json([
-                "msg" => "No de encontró el Producto"
-            ], 404);
+    {        
+        $producto = Productos::find($id);
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'sometimes|required',
+            'tipo' => 'sometimes|required',
+            'descripcion' => 'sometimes|required',
+            'imagen' => 'sometimes|required',
+            'nombre_empresa' => 'sometimes|required',
+        ]);
+        if($validator->fails()){
+            return $this->sendError($validator->errors());       
         }
+        $producto->update($request->all());
+        return $this->sendResponse(new ProductoResource($producto), 'Producto Actualizado.');
+        $producto->update($request->all());
+   
+         
     }
     
     /**

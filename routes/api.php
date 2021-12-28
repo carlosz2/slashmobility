@@ -26,25 +26,25 @@ use \Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 Route::group( ['middleware'=> ['auth:sanctum'],'verified' ], function() {
 
     //rutas para Usuarios
-    //Route::resource('user', UserController::class);
+    Route::resource('user', UserController::class);
     Route::put('updateuser', [UserController::class, "update"]);
     Route::post('forgot-password', [NewPasswordController::class, 'forgotPassword']);
     Route::post('reset-password', [NewPasswordController::class, 'reset']);
     Route::post('logout', [AuthController::class, "logout"]);
- 
+
     Route::get("users/search/{name}", [EmpresaController::class, "searchEmpresa"]);
     //rutas para Productos    
-    Route::resource('products', ProductoController::class);
+    Route::resource('producto', ProductoController::class);
     Route::get("tipoproducto/{tipo}", [ProductoController::class, "TipoProducto"]); 
     Route::get("prodcutoscidudad/{ciudad}", [ProductoController::class, "ProdcutosCidudad"]); 
-    Route::get("productos/search/{name}", [EmpresaController::class, "search"]);
+    Route::get("productos/search/{name}", [ProductoController::class, "search"]);
     //rutas para Empresas    
     Route::resource('empresa', EmpresaController::class);
-    Route::get("productos/search/{name}", [EmpresaController::class, "search"]); 
+    Route::get("empresas/search/{name}", [EmpresaController::class, "search"]); 
     });
  
- Route::post('login', [AuthController::class, "login"]);
- Route::post('user', [UserController::class, 'store']);
+ Route::post('login', [AuthController::class, "login"])->name('login');
+ Route::post('register', [AuthController::class, 'register']);
 
 Route::post('email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
 Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify')->middleware('auth:sanctum');

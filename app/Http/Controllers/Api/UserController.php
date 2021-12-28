@@ -32,12 +32,9 @@ class UserController extends BaseController
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-       
-              
-            $validator = UserResource::make($request->all(), [
-
-                'username' => 'required',
+    {    
+            $validator = Validator::make($request->all(), [
+                'username' => 'required|username|unique:users',
                 'email' => 'required|email|unique:users',
                 'password' => 'required',            
             ]);
@@ -51,14 +48,12 @@ class UserController extends BaseController
             $user->username = $request->username;
             $user->email = $request->email;
             $user->password = Hash::make($request->password);
-            $result = $user->save();
+            $user->save();
             event(new Registered($user));
-            // La API nos devuelve una respuesta
-            $token = $user->createToken('authtoken');
+            $success['token'] =  $user->createToken('MyAuthApp')->plainTextToken;
+            $success['name'] =  $user->name;
          
-            return $this->sendResponse('Usuario creado con éxito.',$token->plainTextToken);
-           
-         
+            return $this->sendResponse($success,'Usuario creado con éxito.'); 
     }
 
 
@@ -91,7 +86,8 @@ class UserController extends BaseController
          $user = User::find($request->user()->id);
          
          $v = Validator::make($request->all(), [
-            'email' => 'sometimes|required|email'
+            'email' => 'sometimes|required|email|unique:users',
+            'username' => 'sometimes|required|username|unique:users',
         ]);
          if($v->fails()){
             return $this->sendError($v->errors());       

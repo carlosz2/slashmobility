@@ -22,7 +22,7 @@ class CreateProductosTable extends Migration
             $table->string("imagen");
             $table->timestamps();
             $table->string('nombre_empresa');
-			$table->foreign('nombre_empresa')->references('nombre_empresa')->on('empresas');
+			$table->foreign('nombre_empresa')->references('nombre_empresa')->on('empresas')->onUpdate('cascade');
         });
     }
 

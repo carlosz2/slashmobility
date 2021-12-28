@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Empresas;
 use App\Http\Resources\Empresa as EmpresaResource;
-class EmpresaController extends Controller
+use App\Http\Controllers\API\BaseController as BaseController;
+use Illuminate\Support\Facades\Validator;
+
+class EmpresaController extends BaseController
 {    
     /**
      * Display a listing of the resource.
@@ -27,25 +30,18 @@ class EmpresaController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $input = $request->all();
+        $validator = Validator::make($input, [
             "nombre_empresa" => "required",
             "direccion" => "required",
             "telefono" => "required",
             "ciudad" => "required",
         ]);
-        // Tenemos que traer el id del usuario logueado
-       
-        $Empresa = new Empresas();    
-        $Empresa->nombre_empresa = $request->nombre_empresa;
-        $Empresa->direccion = $request->direccion;
-        $Empresa->telefono = $request->telefono;
-        $Empresa->ciudad = $request->ciudad;
-        $Empresa->save();
-        //response
-        return response()->json([
-            $Empresa,
-            "msg" => "Empresa creado exitosamente!"
-        ],201);
+        if($validator->fails()){
+            return $this->sendError($validator->errors());       
+        }
+        $empresa = Empresas::create($input);
+        return $this->sendResponse(new EmpresaResource($empresa), 'Empresa creada.');
     }
 
     /**
@@ -56,16 +52,11 @@ class EmpresaController extends Controller
      */
     public function show($id)
     {
-        if( Empresas::where('id', $id)->exists() ){            
-            $info = Empresas::find($id)->get();
-            return response()->json([
-                "msg" => $info,
-            ], 200);
-        }else{            
-            return response()->json([
-                "msg" => "No de encontró el Productos"
-            ], 404);
+        $empresa = Empresas::find($id);
+        if (is_null($empresa)) {
+            return $this->sendError('Empresa no registrada.');
         }
+        return $this->sendResponse(new EmpresaResource($empresa), 'Empresa encontrada.');
     }
 
      /**
@@ -76,22 +67,19 @@ class EmpresaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        if ( Empresas::where( "id", $id)->exists() ) {                        
+    {        
+       
             $empresa = Empresas::find($id);
-           
+          
+            $validator = Validator::make($request->all(), [
+                'nombre_empresa' => 'sometimes|required',
+                
+            ]);
+            if($validator->fails()){
+                return $this->sendError($validator->errors());       
+            }
             $empresa->update($request->all());
-   
-            return response()->json([
-               "producto_atualizado"=>$empresa,
-                "msg" => "Empresa actualizado correctamente."
-            ],200);
-        }else{
-            //responde la API
-            return response()->json([
-                "msg" => "No de encontró el Empresa"
-            ], 404);
-        }
+            return $this->sendResponse(new EmpresaResource($empresa), 'Empresa Actualizada.');
     }
     
          /**
