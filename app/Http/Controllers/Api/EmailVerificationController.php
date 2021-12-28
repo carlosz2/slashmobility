@@ -14,20 +14,20 @@ class EmailVerificationController extends Controller
     {
         if ($request->user()->hasVerifiedEmail()) {
             return response()->json([
-                'message' => 'Already Verified'
+                'message' => 'Cuenta ya verificada'
             ],200);
         }
 
         $request->user()->sendEmailVerificationNotification();
 
-        return ['status' => 'verification-link-sent'];
+        return ['status' => 'Enlace de verificación enviado'];
     }
 
     public function verify(EmailVerificationRequest $request)
     {
         if ($request->user()->hasVerifiedEmail()) {
             return response()->json([
-                'message' => 'Email already verified'
+                'message' => 'Correo electrónico ya verificado'
             ],200);
         }
 
@@ -36,7 +36,7 @@ class EmailVerificationController extends Controller
         }
 
         return response()->json([
-            'message'=>'Email has been verified'
-        ],200);
+            'message'=>'El correo electrónico ha sido verificado'
+        ]);
     }
 }

@@ -15,8 +15,8 @@ class CreateEmpresasTable extends Migration
     {
         Schema::create('empresas', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->increments('id');
-            $table->string("nombre_empresa");
+            $table->id();
+            $table->string("nombre_empresa")->unique();
             $table->string("direccion");
             $table->string("telefono");
             $table->string("ciudad");

@@ -4,24 +4,38 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
-//usamos el modelo Empresa
-use App\Models\Empresa;
-
+use App\Models\Empresas;
+use App\Http\Resources\Empresa as EmpresaResource;
 class EmpresaController extends Controller
 {    
-    // Crear un Empresa
-    public function createEmpresa(Request $request) {
-        //validacion
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $Empresas = Empresas::all();
+        return $this->sendResponse(EmpresaResource::collection($Empresas), 'Usuarios recuperados.');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
         $request->validate([
-            "nombre" => "required",
+            "nombre_empresa" => "required",
             "direccion" => "required",
             "telefono" => "required",
             "ciudad" => "required",
         ]);
         // Tenemos que traer el id del usuario logueado
        
-        $Empresa = new Empresa();    
+        $Empresa = new Empresas();    
         $Empresa->nombre_empresa = $request->nombre_empresa;
         $Empresa->direccion = $request->direccion;
         $Empresa->telefono = $request->telefono;
@@ -29,52 +43,72 @@ class EmpresaController extends Controller
         $Empresa->save();
         //response
         return response()->json([
-            "status" => 1,
+            $Empresa,
             "msg" => "Empresa creado exitosamente!"
-        ]);
+        ],201);
     }
 
-    // Muestra TODOS los blogs de UN USUARIO en particular
-    public function listaEmpresas() {
-        $Empresas = Empresa::all();
-        return response()->json($Empresas);
-    }
-    
-    public function showEmpresa($id) {
-        
-        if( Empresa::where('id', $id)->exists() ){            
-            $info = Empresa::where('id', $id)->get();
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        if( Empresas::where('id', $id)->exists() ){            
+            $info = Empresas::find($id)->get();
             return response()->json([
-                "status" => 1,
                 "msg" => $info,
             ], 200);
         }else{            
             return response()->json([
-                "status" => 0,
-                "msg" => "No de encontró el Empresa"
+                "msg" => "No de encontró el Productos"
             ], 404);
         }
     }
 
-    public function updateEmpresa(Request $request){
-        if ( Empresa::where( "id", $request->id )->exists() ) {                        
-            $Empresa = Empresa::find($request->id);
-            
-            $Empresa->nombre = isset($request->nombre) ? $request->nombre :  $Empresa->nombre;    
-            $Empresa->direccion = isset($request->direccion) ? $request->direccion : $Empresa->direccion;                
-            $Empresa->telefono = isset($request->telefono) ? $request->telefono : $Empresa->telefono;    
-            $Empresa->ciudad = isset($request->ciudad) ? $request->ciudad : $Empresa->ciudad;   
-            
-            $Empresa->save();
-            //respuesta
+     /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        if ( Empresas::where( "id", $id)->exists() ) {                        
+            $empresa = Empresas::find($id);
+           
+            $empresa->update($request->all());
+   
             return response()->json([
-                "status" => 1,
+               "producto_atualizado"=>$empresa,
                 "msg" => "Empresa actualizado correctamente."
-            ]);
+            ],200);
         }else{
             //responde la API
             return response()->json([
-                "status" => 0,
+                "msg" => "No de encontró el Empresa"
+            ], 404);
+        }
+    }
+    
+         /**
+     * Search for a name
+     *
+     * @param  str  $name
+     * @return \Illuminate\Http\Response
+     */
+    public function search($name) {
+         
+        if(Empresas::where('nombre_empresa','like','%'.$name.'%')->get() ){            
+            $info = Empresas::where('nombre_empresa','like','%'.$name.'%')->get();
+            return response()->json([
+                "msg" => $info,
+            ], 200);
+        }else{            
+            return response()->json([
                 "msg" => "No de encontró el Empresa"
             ], 404);
         }

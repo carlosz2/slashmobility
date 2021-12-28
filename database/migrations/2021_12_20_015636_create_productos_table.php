@@ -20,10 +20,9 @@ class CreateProductosTable extends Migration
             $table->string("tipo");
             $table->string("descripcion");
             $table->string("imagen");
-
-            $table->unsignedInteger('empresa_id'); 
-            $table->foreign('empresa_id')->references('id')->on('empresas');
             $table->timestamps();
+            $table->string('nombre_empresa');
+			$table->foreign('nombre_empresa')->references('nombre_empresa')->on('empresas');
         });
     }
 
