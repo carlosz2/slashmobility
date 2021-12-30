@@ -91,15 +91,21 @@ class EmpresaController extends BaseController
     public function search($name) {
          
         if(Empresas::where('nombre_empresa','like','%'.$name.'%')->get() ){            
-            $info = Empresas::where('nombre_empresa','like','%'.$name.'%')->get();
-            return response()->json([
-                "msg" => $info,
-            ], 200);
-        }else{            
-            return response()->json([
-                "msg" => "No de encontró el Empresa"
-            ], 404);
-        }
+            $result = Empresas::where('nombre_empresa','like','%'.$name.'%')->get();
+            $response = [
+                'success' => true,
+                'data'    => $result,
+                'message' => "Productos Encontrados",
+            ];
+    
+            return response()->json($response, 200);
+            }else{            
+                $response = [
+                    'success' => false,
+                    'message' => "No se encontraron los Productos",
+                ];  
+                return response()->json($response, 404);
+            }
     }
 
 }

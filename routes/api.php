@@ -35,7 +35,7 @@ Route::group( ['middleware'=> ['auth:sanctum'],'verified' ], function() {
     Route::get("users/search/{name}", [EmpresaController::class, "searchEmpresa"]);
     //rutas para Productos    
     Route::resource('producto', ProductoController::class);
-    Route::get("tipoproducto/{tipo}", [ProductoController::class, "TipoProducto"]); 
+    Route::get("productotipo/{tipo}", [ProductoController::class, "TipoProducto"]); 
     Route::get("prodcutoscidudad/{ciudad}", [ProductoController::class, "ProdcutosCidudad"]); 
     Route::get("productos/search/{name}", [ProductoController::class, "search"]);
     //rutas para Empresas    

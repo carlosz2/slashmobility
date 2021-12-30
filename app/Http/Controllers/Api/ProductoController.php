@@ -112,14 +112,20 @@ class ProductoController extends BaseController
     public function search($name)
     {
         if(Productos::where('nombre','like','%'.$name.'%')->get() ){            
-            $info = Productos::where('nombre','like','%'.$name.'%')->get();
-            return response()->json([
-                "msg" => $info,
-            ], 200);
+            $result = Productos::where('nombre','like','%'.$name.'%')->get();
+            	$response = [
+            'success' => true,
+            'data'    => $result,
+            'message' => "Productos Encontrados",
+        ];
+
+        return response()->json($response, 200);
         }else{            
-            return response()->json([
-                "msg" => "No de encontró el Usuario"
-            ], 404);
+            $response = [
+                'success' => false,
+                'message' => "Nose encontraron los Productos",
+            ];  
+            return response()->json($response, 404);
         }
     }
 
@@ -127,31 +133,40 @@ class ProductoController extends BaseController
     public function TipoProducto($tipo) {
         
         if( Productos::where('tipo', $tipo)->exists() ){            
-            $info = Productos::where('tipo', $tipo)->get();
-            return response()->json([
-                "msg" => $info,
-            ], 200);
-        }else{            
-            return response()->json([
-                "msg" => "No de encontró Productos con ese Tipo de Productos"
-            ], 404);
-        }
+            $result = Productos::where('tipo', $tipo)->get();
+            $response = [
+                'success' => true,
+                'data'    => $result,
+                'message' => "Productos Encontrados",
+            ];
+    
+            return response()->json($response, 200);
+            }else{            
+                $response = [
+                    'success' => false,
+                    'message' => "No se encontraron los Productos",
+                ];  
+                return response()->json($response, 404);
+            }
     }
     public function ProdcutosCidudad($ciudad) {
         if( Empresas::where('ciudad', $ciudad)->exists() ){ 
-        $info = Productos::select('productos.nombre', 'productos.imagen','empresas.ciudad')
-                ->join('empresas', 'productos.nombre_empresa', '=', 'empresas.nombre_empresa')
-                ->get();
-
-      
-            return response()->json([
-                "msg" => $info,
-            ], 200);
-        }else{            
-            return response()->json([
-                "status" => 0,
-                "msg" => "No se encontró Productos"
-            ], 404);
-        }
+            $result = Empresas::where('ciudad', $ciudad)
+            ->join('productos', 'Empresas.nombre_empresa', '=', 'productos.nombre_empresa')
+            ->select('*')->get();
+            $response = [
+                'success' => true,
+                'data'    => $result,
+                'message' => "Productos Encontrados",
+            ];
+    
+            return response()->json($response, 200);
+            }else{            
+                $response = [
+                    'success' => false,
+                    'message' => "No se encontraron los Productos",
+                ];  
+                return response()->json($response, 404);
+            }
     }
 }

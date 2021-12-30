@@ -25,37 +25,6 @@ class UserController extends BaseController
         return $this->sendResponse(UserResource::collection($users), 'Usuarios recuperados.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {    
-            $validator = Validator::make($request->all(), [
-                'username' => 'required|username|unique:users',
-                'email' => 'required|email|unique:users',
-                'password' => 'required',            
-            ]);
-            if($validator->fails()){
-                return $this->sendError('Error validation', $validator->errors());       
-            }
-            // Creamos al usuario
-            $user = new User();
-            $user->nombre = $request->nombre;
-            $user->apellido = $request->apellido;
-            $user->username = $request->username;
-            $user->email = $request->email;
-            $user->password = Hash::make($request->password);
-            $user->save();
-            event(new Registered($user));
-            $success['token'] =  $user->createToken('MyAuthApp')->plainTextToken;
-            $success['name'] =  $user->name;
-         
-            return $this->sendResponse($success,'Usuario creado con éxito.'); 
-    }
-
 
     /**
      * Display the specified resource.
@@ -107,13 +76,20 @@ class UserController extends BaseController
     {
         if(User::where('username','like','%'.$name.'%')->get() ){            
             $info = User::where('username','like','%'.$name.'%')->get();
-            return response()->json([
-                "msg" => $info,
-            ], 200);
-        }else{            
-            return response()->json([
-                "msg" => "No de encontró el Usuario"
-            ], 404);
+            $response = [
+                'success' => true,
+                'data'    => $result,
+                'message' => "Productos Encontrados",
+            ];
+    
+            return response()->json($response, 200);
+            }else{            
+                $response = [
+                    'success' => false,
+                    'message' => "No se encontraron los Productos",
+                ];  
+                return response()->json($response, 404);
+            }
         }
     }
 }
